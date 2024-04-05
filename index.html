@@ -61,23 +61,33 @@
             maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
-
         function getColor(avgResidual) {
             if (avgResidual === null || avgResidual === undefined) {
                 return '#D3D3D3'; // Light grey for no data
             }
-            // Mapping positive values to a range of blues, darker for higher values
-            if (avgResidual > 0) {
-                return avgResidual > 0.75 ? '#08306B' : // Dark blue
-                    avgResidual > 0.5 ? '#08519C' : // Moderate blue
-                        avgResidual > 0.25 ? '#2171B5' : // Lighter blue
-                            '#6BAED6'; // Lightest blue
+            if (avgResidual > 0.3) {
+                return '#08306B'; // Darkest blue for > 0.3
+            } else if (avgResidual > 0.2) {
+                return '#08519C'; // Slightly lighter blue for > 0.2 to 0.3
+            } else if (avgResidual > 0.15) {
+                return '#2171B5'; // Dark blue for > 0.15 to 0.2
+            } else if (avgResidual > 0.1) {
+                return '#4292C6'; // Moderate blue for > 0.1 to 0.15
+            } else if (avgResidual > 0.05) {
+                return '#6BAED6'; // Light blue for > 0.05 to 0.1
+            } else if (avgResidual > 0) {
+                return '#9ECAE1'; // Lightest blue for > 0 to 0.05
+            } else if (avgResidual > -0.05) {
+                return '#FEE5D9'; // Very light yellow for 0 to -0.05
+            } else if (avgResidual > -0.1) {
+                return '#FDAE6B'; // Light orange for -0.05 to -0.1
+            } else if (avgResidual > -0.2) {
+                return '#FD8D3C'; // Moderate orange for -0.1 to -0.2
+            } else if (avgResidual > -0.3) {
+                return '#F16913'; // Darker orange for -0.2 to -0.3
+            } else {
+                return '#8C2D04'; // Darkest brown for <= -0.3
             }
-            // Mapping negative values to a range from yellow to brown, darker for more negative
-            return avgResidual > -0.25 ? '#FED976' : // Light yellow
-                avgResidual > -0.5 ? '#FD8D3C' : // Orange
-                    avgResidual > -0.75 ? '#FC4E2A' : // Darker orange
-                        '#E31A1C'; // Brown
         }
 
 
@@ -131,20 +141,23 @@
 
         legend.onAdd = function (map) {
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0.4, 0.3, 0.2, 0.1, 0, -0.1, -0.2, -0.3, -0.4], // Existing grades
-                labels = [];
+                grades = [0.3, 0.2, 0.15, 0.1, 0.05, 0, -0.05, -0.1, -0.2, -0.3],
+                // Mapping the grades to labels from 10 to 1, with 10 being the highest (darkest blue)
+                // and 1 being the lowest (darkest brown)
+                labels = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1"];
 
-            // Loop through the grades and generate a label with a colored square for each interval
-            for (var i = 0; i < grades.length; i++) {
-                var from = grades[i];
-                var to = grades[i + 1];
+            // Reverse the labels for correct order in the legend
+            labels.reverse();
 
-                labels.push(
-                    '<i style="background:' + getColor(from + 0.01) + '"></i> ' +
-                    from + (to ? '&ndash;' + to : '+'));
-            }
+            // Generate a label with a colored square and numerical label for each interval
+            grades.forEach(function (grade, index) {
+                var color = getColor(grade);
+                var labelNumber = labels[index];
+                var label = '<i style="background:' + color + '"></i> ' + labelNumber;
+                labels[index] = label;
+            });
 
-            // Add "No Data" with light grey color
+            // Add "No Data" with light grey color and label
             labels.push('<i style="background: #D3D3D3"></i> No Data');
 
             div.innerHTML = labels.join('<br>');
@@ -152,6 +165,7 @@
         };
 
         legend.addTo(map);
+
     </script>
 </body>
 
