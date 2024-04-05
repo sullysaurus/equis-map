@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Actual vs Expected Latino Turnout By County</title>
+    <title>Javier's Map</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.6/leaflet-search.min.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="countyData.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.6/leaflet-search.min.js"></script>
     <style>
         body, html {
             margin: 0;
@@ -82,7 +83,7 @@
         fetch('data.geojson')
             .then(response => response.json())
             .then(geojsonData => {
-                L.geoJson(geojsonData, {
+                var geoJsonLayer = L.geoJson(geojsonData, {
                     style: style,
                     onEachFeature: function (feature, layer) {
                         var latinoTurnout = feature.properties.latino_turnout_2020_cvap;
@@ -95,16 +96,19 @@
                             `Average Residual: ${avgResidual ? avgResidual.toFixed(2) : 'N/A'}`;
 
                         layer.bindPopup(popupContent);
-
-                        // Adding mouseover and mouseout events for hover effect
-                        layer.on('mouseover', function() {
-                            this.bindTooltip(feature.properties.NAME, {permanent: false, direction:"center"}).openTooltip();
-                        });
-                        layer.on('mouseout', function() {
-                            this.closeTooltip();
-                        });
                     }
                 }).addTo(map);
+
+                var searchControl = new L.Control.Search({
+                    layer: geoJsonLayer,
+                    propertyName: 'NAME', // Adjust this to the correct property name for county names in your GeoJSON data
+                    initial: false,
+                    moveToLocation: function(latlng, title, map) {
+                        map.setView(latlng, 17); // Set the zoom level when a search result is selected
+                    }
+                });
+
+                map.addControl(searchControl);
             });
 
         var legend = L.control({ position: 'bottomright' });
