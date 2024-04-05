@@ -48,6 +48,19 @@
             font-weight: bold;
             color: #333;
         }
+
+        /* Styling for the search box label */
+        .search-label {
+            position: absolute;
+            top: 30px;
+            left: 10px;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+        }
     </style>
 </head>
 
@@ -66,20 +79,17 @@
             if (avgResidual === null || avgResidual === undefined) {
                 return '#D3D3D3'; // Light grey for no data
             }
-            // Mapping positive values to a range of blues, darker for higher values
             if (avgResidual > 0) {
-                return avgResidual > 0.75 ? '#08306B' : // Dark blue
-                    avgResidual > 0.5 ? '#08519C' : // Moderate blue
-                        avgResidual > 0.25 ? '#2171B5' : // Lighter blue
-                            '#6BAED6'; // Lightest blue
+                return avgResidual > 0.75 ? '#08306B' :
+                    avgResidual > 0.5 ? '#08519C' :
+                        avgResidual > 0.25 ? '#2171B5' :
+                            '#6BAED6';
             }
-            // Mapping negative values to a range from yellow to brown, darker for more negative
-            return avgResidual > -0.25 ? '#FED976' : // Light yellow
-                avgResidual > -0.5 ? '#FD8D3C' : // Orange
-                    avgResidual > -0.75 ? '#FC4E2A' : // Darker orange
-                        '#E31A1C'; // Brown
+            return avgResidual > -0.25 ? '#FED976' :
+                avgResidual > -0.5 ? '#FD8D3C' :
+                    avgResidual > -0.75 ? '#FC4E2A' :
+                        '#E31A1C';
         }
-
 
         function style(feature) {
             return {
@@ -92,58 +102,57 @@
             };
         }
 
-        fetch('data.geojson')
-            .then(response => response.json())
-            .then(geojsonData => {
-                var geoJsonLayer = L.geoJson(geojsonData, {
-                    style: style,
-                    onEachFeature: function (feature, layer) {
-                        var popupContent = `<strong>County: ${feature.properties.NAME}</strong><br>` +
-                            `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
-                            `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
-                            `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
-                            `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
+        // Simulating a fetch request for geoJSON data
+        var geojsonData = {}; // Your geoJSON data goes here
 
-                        layer.bindPopup(popupContent);
-                        layer.on('mouseover', function () {
-                            this.bindTooltip(feature.properties.NAME, { permanent: false, direction: "center" }).openTooltip();
-                        });
-                        layer.on('mouseout', function () {
-                            this.closeTooltip();
-                        });
-                    }
-                }).addTo(map);
+        var geoJsonLayer = L.geoJson(geojsonData, {
+            style: style,
+            onEachFeature: function (feature, layer) {
+                var popupContent = `<strong>County: ${feature.properties.NAME}</strong><br>` +
+                    `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
+                    `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
+                    `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
+                    `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
+                layer.bindPopup(popupContent);
+            }
+        }).addTo(map);
 
-                var searchControl = new L.Control.Search({
-                    layer: geoJsonLayer,
-                    propertyName: 'NAME',
-                    initial: false,
-                    moveToLocation: function (latlng, title, map) {
-                        map.setView(latlng, 10);
-                    },
-                    textPlaceholder: 'Search county'
-                });
+        var searchControl = new L.Control.Search({
+            layer: geoJsonLayer,
+            propertyName: 'NAME',
+            initial: false,
+            moveToLocation: function (latlng, title, map) {
+                map.setView(latlng, 10);
+            },
+            textPlaceholder: 'Search county'
+        }).addTo(map);
 
-                map.addControl(searchControl);
-            });
+        // Add a visible label for the search box
+        var searchContainer = searchControl.getContainer();
+        var label = document.createElement('div');
+        label.innerHTML = 'Search County:';
+        label.className = 'search-label';
+        searchContainer.parentNode.insertBefore(label, searchContainer);
 
         var legend = L.control({ position: 'bottomright' });
 
         legend.onAdd = function (map) {
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0.75, 0.5, 0.25, 0, -0.25, -0.5, -0.75],
-                labels = [],
-                from, to;
+                grades = [0.75, 0.5, 0.25, 0, -0.25, -0.4], // Existing grades
+                labels = [];
 
-            // Loop through our intervals and generate a label with a colored square for each interval
+            // Loop through the grades and generate a label with a colored square for each interval
             for (var i = 0; i < grades.length; i++) {
-                from = grades[i];
-                to = grades[i + 1];
+                var from = grades[i];
+                var to = grades[i + 1];
 
                 labels.push(
                     '<i style="background:' + getColor(from + 0.01) + '"></i> ' +
                     from + (to ? '&ndash;' + to : '+'));
             }
+
+            // Add "No Data" with light grey color
+            labels.push('<i style="background: #D3D3D3"></i> No Data');
 
             div.innerHTML = labels.join('<br>');
             return div;
