@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Javier's Map</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.6/leaflet-search.min.js"></script>
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -46,8 +48,63 @@
             font-weight: bold;
             color: #333;
         }
+
+        .leaflet-control-search {
+            border: 2px solid #007BFF;
+            /* Blue border */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            /* Shadow for pop-out effect */
+            border-radius: 5px;
+            /* Rounded corners */
+        }
+
+        .leaflet-control-search input {
+            font-size: 16px;
+            /* Larger font size */
+            color: #333;
+            /* Font color */
+        }
+
+        .leaflet-control-search .search-button {
+            width: 30px;
+            /* Larger button width */
+            height: 30px;
+            /* Larger button height */
+            background-color: #007BFF;
+            /* Button background color */
+        }
+
+        .leaflet-control-search .search-cancel {
+            width: 30px;
+            /* Larger cancel button width */
+            height: 30px;
+            /* Larger cancel button height */
+            background-color: #FF6347;
+            /* Cancel button background color */
+        }
+
+        /* Change the background color of the search box */
+        .leaflet-control-search input[type="text"] {
+            background-color: #FFF;
+            /* Lighter background for the input */
+            border-radius: 5px 0 0 5px;
+            /* Rounded corners on the left side */
+        }
+
+        /* Enhance the visibility of the search results */
+        .leaflet-control-search .search-tooltip {
+            font-size: 14px;
+            /* Larger font size for results */
+            border: 1px solid #007BFF;
+            /* Border color for results */
+            background-color: #FFF;
+            /* Background color for results */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            /* Shadow for results */
+        }
     </style>
 </head>
+
 <body>
     <div class="map-title">Actual vs Expected Latino Turnout By County</div>
     <div id="map"></div>
@@ -62,11 +119,11 @@
         function getColor(latinoTurnout) {
             return latinoTurnout > 0.5 ? '#800026' :
                 latinoTurnout > 0.4 ? '#BD0026' :
-                latinoTurnout > 0.3 ? '#E31A1C' :
-                latinoTurnout > 0.2 ? '#FC4E2A' :
-                latinoTurnout > 0.1 ? '#FD8D3C' :
-                latinoTurnout > 0.05 ? '#FEB24C' :
-                '#FFEDA0';
+                    latinoTurnout > 0.3 ? '#E31A1C' :
+                        latinoTurnout > 0.2 ? '#FC4E2A' :
+                            latinoTurnout > 0.1 ? '#FD8D3C' :
+                                latinoTurnout > 0.05 ? '#FEB24C' :
+                                    '#FFEDA0';
         }
 
         function style(feature) {
@@ -103,8 +160,8 @@
                     layer: geoJsonLayer,
                     propertyName: 'NAME', // Adjust this to the correct property name for county names in your GeoJSON data
                     initial: false,
-                    moveToLocation: function(latlng, title, map) {
-                        map.setView(latlng, 17); // Set the zoom level when a search result is selected
+                    moveToLocation: function (latlng, title, map) {
+                        map.setView(latlng, 10); // Set the zoom level when a search result is selected
                     }
                 });
 
@@ -130,4 +187,5 @@
         legend.addTo(map);
     </script>
 </body>
+
 </html>
