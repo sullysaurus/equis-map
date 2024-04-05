@@ -16,7 +16,7 @@
 
         #map {
             width: 100%;
-            height: 100vh; /* Changed from 80vh to 100vh */
+            height: 100vh;
         }
 
         .legend {
@@ -31,9 +31,24 @@
             margin-right: 8px;
             opacity: 0.7;
         }
+
+        .map-title {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
+    <div class="map-title">Actual vs Expected Latino Turnout By County</div>
     <div id="map"></div>
     <script>
         var map = L.map('map').setView([37.8, -96], 4);
