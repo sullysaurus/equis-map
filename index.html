@@ -63,13 +63,16 @@
         }).addTo(map);
 
         function getColor(avgResidual) {
+            if (avgResidual === null || avgResidual === undefined) {
+                return '#D3D3D3'; // Light grey color for no data
+            }
             return avgResidual > 1 ? '#800026' :
-                   avgResidual > 0.75 ? '#BD0026' :
-                   avgResidual > 0.5 ? '#E31A1C' :
-                   avgResidual > 0.25 ? '#FC4E2A' :
-                   avgResidual > 0 ? '#FD8D3C' :
-                   avgResidual > -0.25 ? '#FEB24C' :
-                   '#FFEDA0';
+                avgResidual > 0.75 ? '#BD0026' :
+                avgResidual > 0.5 ? '#E31A1C' :
+                avgResidual > 0.25 ? '#FC4E2A' :
+                avgResidual > 0 ? '#FD8D3C' :
+                avgResidual > -0.25 ? '#FEB24C' :
+                '#FFEDA0';
         }
 
         function style(feature) {
