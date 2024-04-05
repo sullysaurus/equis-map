@@ -81,14 +81,14 @@
             }
             if (avgResidual > 0) {
                 return avgResidual > 0.75 ? '#08306B' :
-                    avgResidual > 0.5 ? '#08519C' :
-                        avgResidual > 0.25 ? '#2171B5' :
-                            '#6BAED6';
+                       avgResidual > 0.5 ? '#08519C' :
+                       avgResidual > 0.25 ? '#2171B5' :
+                       '#6BAED6';
             }
             return avgResidual > -0.25 ? '#FED976' :
-                avgResidual > -0.5 ? '#FD8D3C' :
-                    avgResidual > -0.75 ? '#FC4E2A' :
-                        '#E31A1C';
+                   avgResidual > -0.5 ? '#FD8D3C' :
+                   avgResidual > -0.75 ? '#FC4E2A' :
+                   '#E31A1C';
         }
 
         function style(feature) {
@@ -107,12 +107,12 @@
 
         var geoJsonLayer = L.geoJson(geojsonData, {
             style: style,
-            onEachFeature: function (feature, layer) {
+            onEachFeature: function(feature, layer) {
                 var popupContent = `<strong>County: ${feature.properties.NAME}</strong><br>` +
-                    `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
-                    `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
-                    `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
-                    `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
+                                   `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
+                                   `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
+                                   `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
+                                   `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
                 layer.bindPopup(popupContent);
             }
         }).addTo(map);
@@ -121,7 +121,7 @@
             layer: geoJsonLayer,
             propertyName: 'NAME',
             initial: false,
-            moveToLocation: function (latlng, title, map) {
+            moveToLocation: function(latlng, title, map) {
                 map.setView(latlng, 10);
             },
             textPlaceholder: 'Search county'
@@ -136,23 +136,16 @@
 
         var legend = L.control({ position: 'bottomright' });
 
-        legend.onAdd = function (map) {
+        legend.onAdd = function(map) {
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0.75, 0.5, 0.25, 0, -0.25, -0.4], // Existing grades
+                grades = [0.75, 0.5, 0.25, 0, -0.25, -0.5, -0.75],
                 labels = [];
 
-            // Loop through the grades and generate a label with a colored square for each interval
             for (var i = 0; i < grades.length; i++) {
-                var from = grades[i];
-                var to = grades[i + 1];
-
                 labels.push(
-                    '<i style="background:' + getColor(from + 0.01) + '"></i> ' +
-                    from + (to ? '&ndash;' + to : '+'));
+                    '<i style="background:' + getColor(grades[i] + 0.01) + '"></i> ' +
+                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+'));
             }
-
-            // Add "No Data" with light grey color
-            labels.push('<i style="background: #D3D3D3"></i> No Data');
 
             div.innerHTML = labels.join('<br>');
             return div;
