@@ -23,16 +23,52 @@
         }
 
         .legend {
-            line-height: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #bbb;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             color: #555;
+            font-size: 14px;
+            /* Adjust font size if necessary */
+            margin-bottom: 20px;
+            /* Space at the bottom */
         }
 
         .legend i {
-            width: 18px;
             height: 18px;
-            float: left;
-            margin-right: 8px;
-            opacity: 0.7;
+            width: 40px;
+            display: block;
+            margin: 2px auto;
+            /* Center color blocks and add some vertical space */
+        }
+
+        .legend div {
+            margin: 4px 0;
+            /* Add more space between the text and color blocks */
+        }
+
+        /* Additional styling for 'Above Expectation' and 'Below Expectation' labels */
+        .legend .expectation-label {
+            font-weight: bold;
+            margin: 8px 0;
+            /* Increase space around the expectation labels for clarity */
+        }
+
+        /* Styling for 'No Data' section */
+        .legend .no-data {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .legend .no-data i {
+            margin-right: 5px;
+            /* Space between the 'No Data' icon and its label */
         }
 
         .map-title {
@@ -144,11 +180,19 @@
             div.style.display = 'flex';
             div.style.flexDirection = 'column';
             div.style.alignItems = 'center'; // Ensure content is centered
+            div.style.padding = '10px';
+            div.style.borderRadius = '5px';
+            div.style.border = '1px solid #bbb';
+            div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
+            div.style.color = '#555';
+            div.style.marginBottom = '20px'; // Additional space at the bottom
 
             // Label for "Above Expectation"
             var aboveExpectationLabel = L.DomUtil.create('div', '', div);
             aboveExpectationLabel.innerHTML = 'Above Expectation';
             aboveExpectationLabel.style.textAlign = 'center';
+            aboveExpectationLabel.style.fontWeight = 'bold';
+            aboveExpectationLabel.style.margin = '8px 0'; // Increased space for clarity
 
             // Adjust grades for the correct sequence - positive to negative for visual top to bottom
             var grades = [0.3, 0.2, 0.15, 0.1, 0.05, 0, -0.05, -0.1, -0.2, -0.35],
@@ -159,17 +203,24 @@
                 var colorBlock = L.DomUtil.create('div', '', div);
                 colorBlock.innerHTML = `<i style="background: ${getColor(grade)}; width: 40px; height: 18px; display: inline-block;"></i> ${labels[index]}`;
                 colorBlock.style.textAlign = 'center'; // Center align each color block with its label
+                colorBlock.style.margin = '4px 0'; // Space between elements
             });
 
             // Label for "Below Expectation"
             var belowExpectationLabel = L.DomUtil.create('div', '', div);
             belowExpectationLabel.innerHTML = 'Below Expectation';
             belowExpectationLabel.style.textAlign = 'center';
+            belowExpectationLabel.style.fontWeight = 'bold';
+            belowExpectationLabel.style.margin = '8px 0'; // Increased space for clarity
 
             // Add "No Data" at the bottom
-            var noData = L.DomUtil.create('div', '', div);
+            var noData = L.DomUtil.create('div', 'no-data', div);
             noData.innerHTML = '<i style="background: #D3D3D3; width: 40px; height: 18px; display: inline-block;"></i> No Data';
             noData.style.textAlign = 'center';
+            noData.style.display = 'flex';
+            noData.style.alignItems = 'center';
+            noData.style.justifyContent = 'center';
+            noData.style.width = '100%';
 
             return div;
         };
