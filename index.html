@@ -140,28 +140,42 @@
         var legend = L.control({ position: 'bottomright' });
 
         legend.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0.3, 0.2, 0.15, 0.1, 0.05, 0, -0.05, -0.1, -0.2, -0.35],
-                // Mapping the grades to labels from 10 to 1, with 10 being the highest (darkest blue)
-                // and 1 being the lowest (darkest brown)
-                labels = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1"];
+            var div = L.DomUtil.create('div', 'info legend');
+            div.style.display = 'flex';
+            div.style.flexDirection = 'column';
+            div.style.alignItems = 'center'; // Ensure content is centered
 
-            // Generate a label with a colored square and numerical label for each interval
+            // Label for "Above Expectation"
+            var aboveExpectationLabel = L.DomUtil.create('div', '', div);
+            aboveExpectationLabel.innerHTML = 'Above Expectation';
+            aboveExpectationLabel.style.textAlign = 'center';
+
+            // Adjust grades for the correct sequence - positive to negative for visual top to bottom
+            var grades = [0.3, 0.2, 0.15, 0.1, 0.05, 0, -0.05, -0.1, -0.2, -0.35],
+                labels = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+
+            // Generate color blocks with labels
             grades.forEach(function (grade, index) {
-                var color = getColor(grade);
-                var labelNumber = labels[index];
-                var label = '<i style="background:' + color + '"></i> ' + labelNumber;
-                labels[index] = label;
+                var colorBlock = L.DomUtil.create('div', '', div);
+                colorBlock.innerHTML = `<i style="background: ${getColor(grade)}; width: 40px; height: 18px; display: inline-block;"></i> ${labels[index]}`;
+                colorBlock.style.textAlign = 'center'; // Center align each color block with its label
             });
 
-            // Add "No Data" with light grey color and label
-            labels.push('<i style="background: #D3D3D3"></i> No Data');
+            // Label for "Below Expectation"
+            var belowExpectationLabel = L.DomUtil.create('div', '', div);
+            belowExpectationLabel.innerHTML = 'Below Expectation';
+            belowExpectationLabel.style.textAlign = 'center';
 
-            div.innerHTML = labels.join('<br>');
+            // Add "No Data" at the bottom
+            var noData = L.DomUtil.create('div', '', div);
+            noData.innerHTML = '<i style="background: #D3D3D3; width: 40px; height: 18px; display: inline-block;"></i> No Data';
+            noData.style.textAlign = 'center';
+
             return div;
         };
 
         legend.addTo(map);
+
 
     </script>
 </body>
