@@ -101,30 +101,29 @@
             if (avgResidual === null || avgResidual === undefined) {
                 return '#D3D3D3'; // Light grey for no data
             }
-            if (avgResidual > 0.3) {
-                return '#08306B'; // Darkest blue for > 0.3
-            } else if (avgResidual > 0.2) {
-                return '#08519C'; // Slightly lighter blue for > 0.2 to 0.3
-            } else if (avgResidual > 0.15) {
-                return '#2171B5'; // Dark blue for > 0.15 to 0.2
-            } else if (avgResidual > 0.1) {
-                return '#4292C6'; // Moderate blue for > 0.1 to 0.15
-            } else if (avgResidual > 0.05) {
-                return '#6BAED6'; // Light blue for > 0.05 to 0.1
-            } else if (avgResidual > 0) {
-                return '#9ECAE1'; // Lightest blue for > 0 to 0.05
-            } else if (avgResidual > -0.05) {
-                return '#FEE5D9'; // Very light yellow for 0 to -0.05
-            } else if (avgResidual > -0.1) {
-                return '#FDAE6B'; // Light orange for -0.05 to -0.1
-            } else if (avgResidual > -0.2) {
-                return '#FD8D3C'; // Moderate orange for -0.1 to -0.2
-            } else if (avgResidual > -0.3) {
-                return '#F16913'; // Darker orange for -0.2 to -0.3
+            if (avgResidual > 0.114948) {
+                return '#023e8a'; // Decile 10
+            } else if (avgResidual > 0.066307) {
+                return '#0096c7'; // Decile 9
+            } else if (avgResidual > 0.035842) {
+                return '#48cae4'; // Decile 8
+            } else if (avgResidual > 0.013220) {
+                return '#90e0ef'; // Decile 7
+            } else if (avgResidual > -0.005952) {
+                return '#ade8f4'; // Decile 6
+            } else if (avgResidual > -0.026475) {
+                return '#e9d8a6'; // Decile 5
+            } else if (avgResidual > -0.045482) {
+                return '#ee9b00'; // Decile 4
+            } else if (avgResidual > -0.072137) {
+                return '#ca6702'; // Decile 3
+            } else if (avgResidual > -0.110951) {
+                return '#bb3e03'; // Decile 2
             } else {
-                return '#8C2D04'; // Darkest brown for <= -0.35
+                return '#9b2226'; // Decile 1
             }
         }
+
 
 
         function style(feature) {
@@ -173,60 +172,26 @@
                 map.addControl(searchControl);
             });
 
+
         var legend = L.control({ position: 'bottomright' });
 
         legend.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'info legend');
-            div.style.display = 'flex';
-            div.style.flexDirection = 'column';
-            div.style.alignItems = 'center'; // Ensure content is centered
-            div.style.padding = '10px';
-            div.style.borderRadius = '5px';
-            div.style.border = '1px solid #bbb';
-            div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
-            div.style.color = '#555';
-            div.style.marginBottom = '20px'; // Additional space at the bottom
+            var div = L.DomUtil.create('div', 'info legend'),
+                grades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                labels = [],
+                colors = ['#023e8a', '#0096c7', '#48cae4', '#90e0ef', '#ade8f4', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#9b2226'];
 
-            // Label for "Above Expectation"
-            var aboveExpectationLabel = L.DomUtil.create('div', '', div);
-            aboveExpectationLabel.innerHTML = 'Above Expectation';
-            aboveExpectationLabel.style.textAlign = 'center';
-            aboveExpectationLabel.style.fontWeight = 'bold';
-            aboveExpectationLabel.style.margin = '8px 0'; // Increased space for clarity
-
-            // Adjust grades for the correct sequence - positive to negative for visual top to bottom
-            var grades = [0.3, 0.2, 0.15, 0.1, 0.05, 0, -0.05, -0.1, -0.2, -0.35],
-                labels = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-
-            // Generate color blocks with labels
-            grades.forEach(function (grade, index) {
-                var colorBlock = L.DomUtil.create('div', '', div);
-                colorBlock.innerHTML = `<i style="background: ${getColor(grade)}; width: 40px; height: 18px; display: inline-block;"></i> ${labels[index]}`;
-                colorBlock.style.textAlign = 'center'; // Center align each color block with its label
-                colorBlock.style.margin = '4px 0'; // Space between elements
-            });
-
-            // Label for "Below Expectation"
-            var belowExpectationLabel = L.DomUtil.create('div', '', div);
-            belowExpectationLabel.innerHTML = 'Below Expectation';
-            belowExpectationLabel.style.textAlign = 'center';
-            belowExpectationLabel.style.fontWeight = 'bold';
-            belowExpectationLabel.style.margin = '8px 0'; // Increased space for clarity
-
-            // Add "No Data" at the bottom
-            var noData = L.DomUtil.create('div', 'no-data', div);
-            noData.innerHTML = '<i style="background: #D3D3D3; width: 40px; height: 18px; display: inline-block;"></i> No Data';
-            noData.style.textAlign = 'center';
-            noData.style.display = 'flex';
-            noData.style.alignItems = 'center';
-            noData.style.justifyContent = 'center';
-            noData.style.width = '100%';
+            // Generate a label with a colored square for each interval
+            for (var i = 0; i < grades.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + colors[i] + '; width: 40px; height: 18px; display: block;"></i> ' +
+                    grades[i];
+            }
 
             return div;
         };
 
         legend.addTo(map);
-
 
     </script>
 </body>
