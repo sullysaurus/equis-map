@@ -114,7 +114,8 @@
                     initial: false,
                     moveToLocation: function (latlng, title, map) {
                         map.setView(latlng, 10); // Set the zoom level when a search result is selected
-                    }
+                    },
+                    textPlaceholder: 'Search County' // This line adds the placeholder text to the search box
                 });
 
                 map.addControl(searchControl);
