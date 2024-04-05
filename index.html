@@ -99,6 +99,12 @@
                             `Average Residual: ${avgResidual ? avgResidual.toFixed(2) : 'N/A'}`;
 
                         layer.bindPopup(popupContent);
+                        layer.on('mouseover', function () {
+                            this.bindTooltip(feature.properties.NAME, { permanent: false, direction: "center" }).openTooltip();
+                        });
+                        layer.on('mouseout', function () {
+                            this.closeTooltip();
+                        });
                     }
                 }).addTo(map);
 
