@@ -64,16 +64,22 @@
 
         function getColor(avgResidual) {
             if (avgResidual === null || avgResidual === undefined) {
-                return '#D3D3D3'; // Light grey color for no data
+                return '#D3D3D3'; // Light grey for no data
             }
-            return avgResidual > 1 ? '#800026' :
-                avgResidual > 0.75 ? '#BD0026' :
-                avgResidual > 0.5 ? '#E31A1C' :
-                avgResidual > 0.25 ? '#FC4E2A' :
-                avgResidual > 0 ? '#FD8D3C' :
-                avgResidual > -0.25 ? '#FEB24C' :
-                '#FFEDA0';
+            // Mapping positive values to a range of blues, darker for higher values
+            if (avgResidual > 0) {
+                return avgResidual > 0.75 ? '#08306B' : // Dark blue
+                    avgResidual > 0.5 ? '#08519C' : // Moderate blue
+                        avgResidual > 0.25 ? '#2171B5' : // Lighter blue
+                            '#6BAED6'; // Lightest blue
+            }
+            // Mapping negative values to a range from yellow to brown, darker for more negative
+            return avgResidual > -0.25 ? '#FED976' : // Light yellow
+                avgResidual > -0.5 ? '#FD8D3C' : // Orange
+                    avgResidual > -0.75 ? '#FC4E2A' : // Darker orange
+                        '#E31A1C'; // Brown
         }
+
 
         function style(feature) {
             return {
