@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Actual vs Expected Latino Turnout By County</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +8,7 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.6/leaflet-search.min.js"></script>
     <style>
-        body,
-        html {
+        body, html {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -23,16 +21,27 @@
         }
 
         .legend {
-            line-height: 18px;
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: 1px solid #bbb;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
             color: #555;
         }
 
         .legend i {
-            width: 18px;
             height: 18px;
-            float: left;
-            margin-right: 8px;
-            opacity: 0.7;
+            width: 40px;
+            margin-right: 2px; /* Adjust space between color blocks */
+        }
+
+        .legend .title {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            margin: 0 10px;
         }
 
         .map-title {
@@ -50,7 +59,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="map-title">Actual vs Expected Latino Turnout By County</div>
     <div id="map"></div>
@@ -61,6 +69,7 @@
             maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
+
         function getColor(avgResidual) {
             if (avgResidual === null || avgResidual === undefined) {
                 return '#D3D3D3'; // Light grey for no data
@@ -86,10 +95,9 @@
             } else if (avgResidual > -0.3) {
                 return '#F16913'; // Darker orange for -0.2 to -0.3
             } else {
-                return '#8C2D04'; // Darkest brown for <= -0.35
+                return '#8C2D04'; // Darkest brown for <= -0.3
             }
         }
-
 
         function style(feature) {
             return {
@@ -102,71 +110,50 @@
             };
         }
 
+        // Assuming 'data.geojson' is accessible at the given URL
         fetch('data.geojson')
-            .then(response => response.json())
-            .then(geojsonData => {
-                var geoJsonLayer = L.geoJson(geojsonData, {
-                    style: style,
-                    onEachFeature: function (feature, layer) {
-                        var popupContent = `<strong>County: ${feature.properties.NAME}</strong><br>` +
-                            `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
-                            `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
-                            `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
-                            `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
+        .then(response => response.json())
+        .then(geojsonData => {
+            L.geoJson(geojsonData, {
+                style: style,
+                onEachFeature: function (feature, layer) {
+                    var popupContent = `<strong>County: ${feature.properties.NAME}</strong><br>` +
+                        `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
+                        `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
+                        `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
+                        `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
+                    layer.bindPopup(popupContent);
+                }
+            }).addTo(map);
+        });
 
-                        layer.bindPopup(popupContent);
-                        layer.on('mouseover', function () {
-                            this.bindTooltip(feature.properties.NAME, { permanent: false, direction: "center" }).openTooltip();
-                        });
-                        layer.on('mouseout', function () {
-                            this.closeTooltip();
-                        });
-                    }
-                }).addTo(map);
-
-                var searchControl = new L.Control.Search({
-                    layer: geoJsonLayer,
-                    propertyName: 'NAME',
-                    initial: false,
-                    moveToLocation: function (latlng, title, map) {
-                        map.setView(latlng, 10);
-                    },
-                    textPlaceholder: 'Search county'
-                });
-
-                map.addControl(searchControl);
-            });
+        var searchControl = new L.Control.Search({
+            layer: geoJsonLayer,
+            propertyName: 'NAME',
+            initial: false,
+            moveToLocation: function(latlng, title, map) {
+                map.setView(latlng, 10);
+            },
+            textPlaceholder: 'Search county'
+        }).addTo(map);
 
         var legend = L.control({ position: 'bottomright' });
 
-        legend.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'info legend'),
+        legend.onAdd = function(map) {
+            var div = L.DomUtil.create('div', 'legend'),
                 grades = [0.3, 0.2, 0.15, 0.1, 0.05, 0, -0.05, -0.1, -0.2, -0.3],
-                // Mapping the grades to labels from 10 to 1, with 10 being the highest (darkest blue)
-                // and 1 being the lowest (darkest brown)
-                labels = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1"];
+                labels = ['Above Expectation', '', '', '', 'At Expectation', '', '', '', 'Below Expectation'];
 
-            // Reverse the labels for correct order in the legend
-            labels.reverse();
-
-            // Generate a label with a colored square and numerical label for each interval
-            grades.forEach(function (grade, index) {
-                var color = getColor(grade);
-                var labelNumber = labels[index];
-                var label = '<i style="background:' + color + '"></i> ' + labelNumber;
-                labels[index] = label;
+            div.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">';
+            grades.forEach(function(grade, index) {
+                div.innerHTML += '<i style="background:' + getColor(grade) + '"></i>';
             });
+            div.innerHTML += '</div><div style="display: flex; justify-content: space-between; width: 100%;"><span>' + labels.join('</span><span>') + '</span></div>';
 
-            // Add "No Data" with light grey color and label
-            labels.push('<i style="background: #D3D3D3"></i> No Data');
-
-            div.innerHTML = labels.join('<br>');
             return div;
         };
 
         legend.addTo(map);
-
     </script>
 </body>
-
 </html>
