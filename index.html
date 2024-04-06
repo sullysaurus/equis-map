@@ -149,26 +149,18 @@
                 var geoJsonLayer = L.geoJson(geojsonData, {
                     style: style,
                     onEachFeature: function (feature, layer) {
-                        // Initialize variables for each property. If the property is undefined, set it to "No Data".
-                        let state = feature.properties.state || "No Data";
-                        let county = feature.properties.NAME || "No Data";
-                        let latinoCvap2020 = feature.properties.latino_cvap_2020 !== undefined ? feature.properties.latino_cvap_2020 : "No Data";
-                        let latinoVoted2020 = feature.properties.latino_voted_2020 !== undefined ? feature.properties.latino_voted_2020 : "No Data";
-                        let latinoTurnout2020Cvap = feature.properties.latino_turnout_2020_cvap !== undefined ? (feature.properties.latino_turnout_2020_cvap * 100).toFixed(2) + "%" : "No Data";
-                        let avgResidual = feature.properties.avg24_residual !== undefined ? feature.properties.avg24_residual.toFixed(2) : "No Data";
-
-                        // Adjust the popupContent string to include the state and use the initialized variables.
-                        var popupContent = `<strong>County: ${county}, ${state}</strong><br>` +
-                            `Latino CVAP 2020: ${latinoCvap2020}<br>` +
-                            `Latino Voted 2020: ${latinoVoted2020}<br>` +
-                            `Latino Turnout 2020 CVAP: ${latinoTurnout2020Cvap}<br>` +
-                            `Average Residual: ${avgResidual}`;
+                        // Adjust the popupContent string to include the state.
+                        var popupContent = `<strong>County: ${feature.properties.NAME}, ${feature.properties.state}</strong><br>` +
+                            `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
+                            `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
+                            `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
+                            `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
 
                         layer.bindPopup(popupContent);
 
-                        // Update the tooltip to include both county and state, handling "No Data" cases.
+                        // Update the tooltip to include both county and state.
                         layer.on('mouseover', function () {
-                            this.bindTooltip(`${county}, ${state}`, { permanent: false, direction: "center" }).openTooltip();
+                            this.bindTooltip(`${feature.properties.NAME}, ${feature.properties.state}`, { permanent: false, direction: "center" }).openTooltip();
                         });
                         layer.on('mouseout', function () {
                             this.closeTooltip();
@@ -186,7 +178,7 @@
                     textPlaceholder: 'Search county...',
                     buildTip: function (text, val) { // Custom function to build the tip for each search result.
                         var feature = val.layer.feature;
-                        var state = feature.properties.state || 'Unknown State';
+                        var state = feature.properties.state || 'Unknown State'; 
                         return `<a href="#" class="">${text}, ${state}</a>`; // Display format: "County, State"
                     }
                 });
