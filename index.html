@@ -169,16 +169,36 @@
                 }).addTo(map);
 
                 var searchControl = new L.Control.Search({
-                    layer: geoJsonLayer,
-                    propertyName: 'NAME',
+                    layer: geoJsonLayer, // Your GeoJSON layer
+                    propertyName: 'NAME', // Primary property to search
                     initial: false,
                     moveToLocation: function (latlng, title, map) {
-                        map.setView(latlng, 10);
+                        map.setView(latlng, 10); // Zoom level when a search result is selected
                     },
-                    textPlaceholder: 'Search county'
+                    textPlaceholder: 'Search county...', // Placeholder text for the search input
+                    filterData: function (text, records) {
+                        var filteredRecords = {};
+                        Object.keys(records).forEach(function (key) {
+                            var record = records[key];
+                            var countyName = record.feature.properties.NAME;
+                            var stateName = record.feature.properties.STATE; // Assumes 'STATE' is the property name for the state
+                            if (countyName.toLowerCase().indexOf(text.toLowerCase()) !== -1) {
+                                filteredRecords[key] = record;
+                            } else if (stateName && stateName.toLowerCase().indexOf(text.toLowerCase()) !== -1) {
+                                // This else-if is optional: it allows searching by state name as well
+                                filteredRecords[key] = record;
+                            }
+                        });
+                        return filteredRecords;
+                    },
+                    buildTip: function (text, val) {
+                        var type = val.layer.feature.properties.TYPE; // Just an example property
+                        return `<a href="#" class="${type}">${text} - ${val.layer.feature.properties.STATE}</a>`;
+                    }
                 });
 
                 map.addControl(searchControl);
+
             });
 
 
