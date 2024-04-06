@@ -178,7 +178,7 @@
                     textPlaceholder: 'Search county...',
                     buildTip: function (text, val) { // Custom function to build the tip for each search result.
                         var feature = val.layer.feature;
-                        var state = feature.properties.STATE || 'Unknown State'; // Adjust 'STATE' to your actual state property name.
+                        var state = feature.properties.state || 'Unknown State'; 
                         return `<a href="#" class="">${text}, ${state}</a>`; // Display format: "County, State"
                     }
                 });
