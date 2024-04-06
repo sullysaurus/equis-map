@@ -149,18 +149,15 @@
                 var geoJsonLayer = L.geoJson(geojsonData, {
                     style: style,
                     onEachFeature: function (feature, layer) {
-                        // Adjust the popupContent string to include the state.
-                        var popupContent = `<strong>County: ${feature.properties.NAME}, ${feature.properties.state}</strong><br>` +
+                        var popupContent = `<strong>County: ${feature.properties.NAME}</strong><br>` +
                             `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
                             `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
                             `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
                             `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
 
                         layer.bindPopup(popupContent);
-
-                        // Update the tooltip to include both county and state.
                         layer.on('mouseover', function () {
-                            this.bindTooltip(`${feature.properties.NAME}, ${feature.properties.state}`, { permanent: false, direction: "center" }).openTooltip();
+                            this.bindTooltip(feature.properties.NAME, { permanent: false, direction: "center" }).openTooltip();
                         });
                         layer.on('mouseout', function () {
                             this.closeTooltip();
