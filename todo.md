@@ -1,5 +1,4 @@
 # TODO
-- Fix state on hover and search autocomplete
 - update with "Actual vs. Expected Latino Turnout by County Presidential Election 2020 Source: Equis modeling using Catalist & Census data", bigger box, location top left and font 
 - make legend horizontal with the text "below expectation", "at expectation", "above expectation"
 - Third line in the tooltip, remove the word "CVAP" and the number itself can be converted to percentage.
