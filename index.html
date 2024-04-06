@@ -33,7 +33,9 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             color: #555;
             font-size: 14px;
+            /* Adjust font size if necessary */
             margin-bottom: 20px;
+            /* Space at the bottom */
         }
 
         .legend i {
@@ -41,17 +43,22 @@
             width: 40px;
             display: block;
             margin: 2px auto;
+            /* Center color blocks and add some vertical space */
         }
 
         .legend div {
             margin: 4px 0;
+            /* Add more space between the text and color blocks */
         }
 
+        /* Additional styling for 'Above Expectation' and 'Below Expectation' labels */
         .legend .expectation-label {
             font-weight: bold;
             margin: 8px 0;
+            /* Increase space around the expectation labels for clarity */
         }
 
+        /* Styling for 'No Data' section */
         .legend .no-data {
             display: flex;
             align-items: center;
@@ -61,6 +68,7 @@
 
         .legend .no-data i {
             margin-right: 5px;
+            /* Space between the 'No Data' icon and its label */
         }
 
         .map-title {
@@ -123,6 +131,7 @@
             }
         }
 
+
         function style(feature) {
             return {
                 fillColor: getColor(feature.properties.avg24_residual),
@@ -137,58 +146,67 @@
         fetch('data.geojson')
             .then(response => response.json())
             .then(geojsonData => {
-                geojsonData.features.forEach(function(feature) {
-                    feature.properties.combinedName = `${feature.properties.NAME}, ${feature.properties.state || 'No Data'}`;
-                });
-
                 var geoJsonLayer = L.geoJson(geojsonData, {
                     style: style,
                     onEachFeature: function (feature, layer) {
-                        var popupContent = `<strong>County: ${feature.properties.NAME}, ${feature.properties.state || 'No Data'}</strong><br>` +
-                                           `Latino CVAP 2020: ${feature.properties.latino_cvap_2020 || 'No Data'}<br>` +
-                                           `Latino Voted 2020: ${feature.properties.latino_voted_2020 || 'No Data'}<br>` +
-                                           `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap !== undefined ? (feature.properties.latino_turnout_2020_cvap * 100).toFixed(2) + '%' : 'No Data'}<br>` +
-                                           `Average Residual: ${feature.properties.avg24_residual !== undefined ? feature.properties.avg24_residual.toFixed(2) : 'No Data'}`;
+                        // Adjust the popupContent string to include the state.
+                        var popupContent = `<strong>County: ${feature.properties.NAME}, ${feature.properties.state}</strong><br>` +
+                            `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
+                            `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
+                            `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
+                            `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
+
                         layer.bindPopup(popupContent);
+
+                        // Update the tooltip to include both county and state.
+                        layer.on('mouseover', function () {
+                            this.bindTooltip(`${feature.properties.NAME}, ${feature.properties.state}`, { permanent: false, direction: "center" }).openTooltip();
+                        });
+                        layer.on('mouseout', function () {
+                            this.closeTooltip();
+                        });
                     }
                 }).addTo(map);
 
                 var searchControl = new L.Control.Search({
                     layer: geoJsonLayer,
-                    propertyName: 'combinedName',
+                    propertyName: 'NAME', // Assumes you are searching by the county name.
                     initial: false,
-                    moveToLocation: function(latlng, title, map) {
-                        map.setView(latlng, 10);
+                    moveToLocation: function (latlng, title, map) {
+                        map.setView(latlng, 10); // Adjust as necessary.
                     },
-                    textPlaceholder: 'Search for a county...',
-                    buildTip: function(text, val) {
-                        return `<a href="#" class="">${text}</a>`;
+                    textPlaceholder: 'Search county...',
+                    buildTip: function (text, val) { // Custom function to build the tip for each search result.
+                        var feature = val.layer.feature;
+                        var state = feature.properties.state || 'Unknown State'; 
+                        return `<a href="#" class="">${text}, ${state}</a>`; // Display format: "County, State"
                     }
                 });
 
                 map.addControl(searchControl);
             });
 
+
         var legend = L.control({ position: 'bottomright' });
 
         legend.onAdd = function (map) {
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0.115, 0.066, 0.036, 0.013, -0.006, -0.026, -0.046, -0.072, -0.111],
+                grades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 labels = [],
-                from, to;
-            for (var i = 0; i < grades.length; i++) {
-                from = grades[i];
-                to = grades[i + 1];
+                colors = ['#023e8a', '#0096c7', '#48cae4', '#90e0ef', '#ade8f4', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#9b2226'];
 
-                labels.push(
-                    '<i style="background:' + getColor(from + 0.001) + '"></i> ' +
-                    from.toFixed(3) + (to ? '&ndash;' + to.toFixed(3) : '+'));
+            // Generate a label with a colored square for each interval
+            for (var i = 0; i < grades.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + colors[i] + '; width: 40px; height: 18px; display: block;"></i> ' +
+                    grades[i];
             }
-            div.innerHTML = labels.join('<br>');
+
             return div;
         };
 
         legend.addTo(map);
+
     </script>
 </body>
 
