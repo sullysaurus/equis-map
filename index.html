@@ -149,15 +149,18 @@
                 var geoJsonLayer = L.geoJson(geojsonData, {
                     style: style,
                     onEachFeature: function (feature, layer) {
-                        var popupContent = `<strong>County: ${feature.properties.NAME}</strong><br>` +
+                        // Adjust the popupContent string to include the state.
+                        var popupContent = `<strong>County: ${feature.properties.NAME}, ${feature.properties.state}</strong><br>` +
                             `Latino CVAP 2020: ${feature.properties.latino_cvap_2020}<br>` +
                             `Latino Voted 2020: ${feature.properties.latino_voted_2020}<br>` +
                             `Latino Turnout 2020 CVAP: ${feature.properties.latino_turnout_2020_cvap ? feature.properties.latino_turnout_2020_cvap.toFixed(2) : 'N/A'}%<br>` +
                             `Average Residual: ${feature.properties.avg24_residual ? feature.properties.avg24_residual.toFixed(2) : 'N/A'}`;
 
                         layer.bindPopup(popupContent);
+
+                        // Update the tooltip to include both county and state.
                         layer.on('mouseover', function () {
-                            this.bindTooltip(feature.properties.NAME, { permanent: false, direction: "center" }).openTooltip();
+                            this.bindTooltip(`${feature.properties.NAME}, ${feature.properties.state}`, { permanent: false, direction: "center" }).openTooltip();
                         });
                         layer.on('mouseout', function () {
                             this.closeTooltip();
@@ -167,12 +170,17 @@
 
                 var searchControl = new L.Control.Search({
                     layer: geoJsonLayer,
-                    propertyName: 'NAME',
+                    propertyName: 'NAME', // Assumes you are searching by the county name.
                     initial: false,
                     moveToLocation: function (latlng, title, map) {
-                        map.setView(latlng, 10);
+                        map.setView(latlng, 10); // Adjust as necessary.
                     },
-                    textPlaceholder: 'Search county'
+                    textPlaceholder: 'Search county...',
+                    buildTip: function (text, val) { // Custom function to build the tip for each search result.
+                        var feature = val.layer.feature;
+                        var state = feature.properties.STATE || 'Unknown State'; // Adjust 'STATE' to your actual state property name.
+                        return `<a href="#" class="">${text}, ${state}</a>`; // Display format: "County, State"
+                    }
                 });
 
                 map.addControl(searchControl);
