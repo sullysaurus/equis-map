@@ -170,16 +170,16 @@
 
                 var searchControl = new L.Control.Search({
                     layer: geoJsonLayer,
-                    propertyName: 'NAME', // Assumes you are searching by the county name.
+                    propertyName: 'combined_county_state', // Assumes you are searching by the county name.
                     initial: false,
                     moveToLocation: function (latlng, title, map) {
-                        map.setView(latlng, 10); // Adjust as necessary.
+                        map.setView(latlng, 5); // Adjust as necessary.
                     },
                     textPlaceholder: 'Search county...',
                     buildTip: function (text, val) { // Custom function to build the tip for each search result.
                         var feature = val.layer.feature;
                         var state = feature.properties.state || 'Unknown State'; 
-                        return `<a href="#" class="">${text}, ${state}</a>`; // Display format: "County, State"
+                        return `<a href="#" class="">${text}</a>`; // Display format: "County, State"
                     }
                 });
 
