@@ -259,7 +259,7 @@
             };
         }
 
-        fetch('data.geojson')
+        fetch('counties.geojson')
             .then(response => response.json())
             .then(geojsonData => {
                 var geoJsonLayer = L.geoJson(geojsonData, {
@@ -294,6 +294,22 @@
 
                 }).addTo(map);
 
+                // Add state boundaries as dark blue lines
+                fetch('us.geojson').then(function (response) {
+                    return response.json();
+                }).then(function (data) {
+                    L.geoJson(data, {
+                        style: {
+                            color: "#00008B", // Dark blue
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0
+                        },
+                        interactive: false // This ensures the layer does not capture mouse events
+                    }).addTo(map);
+                });
+
+
                 var searchControl = new L.Control.Search({
                     layer: geoJsonLayer,
                     propertyName: 'combined_county_state', // Assumes you are searching by the county name.
@@ -313,6 +329,7 @@
 
                 map.addControl(searchControl);
             });
+
 
 
         var legend = L.control({ position: 'bottomright' });
