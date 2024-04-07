@@ -74,15 +74,31 @@
         .map-title {
             position: absolute;
             top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 80px;
+            /* Position from the left edge of the page */
+            transform: none;
+            /* Remove the transform property */
             z-index: 1000;
             background-color: rgba(255, 255, 255, 0.8);
             padding: 5px 10px;
             border-radius: 5px;
+            color: #333;
+            text-align: center;
+            /* Center the text */
+        }
+
+        /* Custom font sizes for each line of text */
+        .map-title p:nth-child(1) {
             font-size: 18px;
             font-weight: bold;
-            color: #333;
+        }
+
+        .map-title p:nth-child(2) {
+            font-size: 16px;
+        }
+
+        .map-title p:nth-child(3) {
+            font-size: 14px;
         }
     </style>
 </head>
@@ -90,6 +106,8 @@
 <body>
     <div class="map-title">
         <p>Actual vs. Expected Latino Turnout by County</p>
+        <p>Presidential Election 2020</p>
+        <p>Source: Equis modeling using Catalist & Census data</p>
     </div>
 
     <div id="map"></div>
@@ -162,7 +180,16 @@
                             `Average Residual: ${avgResidual}`;
 
                         layer.bindPopup(popupContent);
+                        // Update the tooltip to include combined county and state.
+                        layer.on('mouseover', function () {
+                            this.bindTooltip(`${feature.properties.combined_county_state}`, { permanent: false, direction: "center" }).openTooltip();
+                        });
+                        layer.on('mouseout', function () {
+                            this.closeTooltip();
+                        });
+
                     }
+
                 }).addTo(map);
 
                 var searchControl = new L.Control.Search({
