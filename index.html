@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.6/leaflet-search.min.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.6/leaflet-search.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
     <style>
         body,
         html {
@@ -20,6 +21,22 @@
         #map {
             width: 100%;
             height: 100vh;
+        }
+
+        .map-title,
+        .legend .expectation-label {
+            font-family: 'Roboto', sans-serif;
+            /* Placeholder for Franklin Gothic */
+            font-weight: 700;
+            /* Bold for titles */
+        }
+
+        .legend,
+        .legend div {
+            font-family: 'Roboto', sans-serif;
+            /* Placeholder for Franklin Gothic */
+            font-weight: 400;
+            /* Medium/book weight for subtitles and content */
         }
 
         .legend {
@@ -99,6 +116,10 @@
 
         .map-title p:nth-child(3) {
             font-size: 14px;
+        }
+
+        .leaflet-control-search .search-button {
+            background-image: url('https://opengeo.tech/maps/leaflet-search/images/search-icon.png') !important;
         }
     </style>
 </head>
@@ -200,6 +221,8 @@
                     layer: geoJsonLayer,
                     propertyName: 'combined_county_state', // Assumes you are searching by the county name.
                     initial: false,
+                    collapsed: false,
+                    position: 'topleft',
                     moveToLocation: function (latlng, title, map) {
                         map.setView(latlng, 5); // Adjust as necessary.
                     },
