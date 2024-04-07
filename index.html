@@ -91,7 +91,7 @@
         .map-title {
             position: absolute;
             top: 10px;
-            left: 80px;
+            left: 10px;
             /* Position from the left edge of the page */
             transform: none;
             /* Remove the transform property */
@@ -121,6 +121,10 @@
         .leaflet-control-search .search-button {
             background-image: url('https://opengeo.tech/maps/leaflet-search/images/search-icon.png') !important;
         }
+
+        .leaflet-control-search.search-exp {
+            margin-top: 150px;
+        }
     </style>
 </head>
 
@@ -133,7 +137,16 @@
 
     <div id="map"></div>
     <script>
-        var map = L.map('map').setView([39.9, -97.9], 5);
+        var map = L.map('map', {
+            center: [39.9, -97.9],
+            zoom: 5,
+            zoomControl: false // Disable the default zoom control
+        });
+
+        // Add the zoom control at the top right corner
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(map);
 
         L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
             attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.',
@@ -142,6 +155,7 @@
             maxZoom: 20,
             ext: 'png'
         }).addTo(map);
+
 
         function getColor(avgResidual) {
             if (avgResidual === null || avgResidual === undefined) {
@@ -241,22 +255,43 @@
         var legend = L.control({ position: 'bottomright' });
 
         legend.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'info legend'),
-                grades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                labels = [],
-                colors = ['#023e8a', '#0096c7', '#48cae4', '#90e0ef', '#ade8f4', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#9b2226'];
+            var div = L.DomUtil.create('div', 'info legend');
+            div.style.display = 'flex';
+            div.style.flexDirection = 'row'; // Align items horizontally
+            div.style.flexWrap = 'wrap'; // Allow items to wrap in the container
+            div.style.alignItems = 'center'; // Center items vertically
+            div.style.justifyContent = 'center'; // Center items horizontally
+            div.style.padding = '6px'; // Adjust padding for compactness
+            div.style.backgroundColor = 'rgba(255,255,255,0.8)'; // Optional: Add background color for visibility
+            div.style.borderRadius = '5px'; // Optional: Round corners of the legend
+            div.style.boxShadow = '0 0 5px rgba(0,0,0,0.2)'; // Optional: Add shadow for depth
+
+            var grades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // Standard order
+                colors = ['#9b2226', '#bb3e03', '#ca6702', '#ee9b00', '#e9d8a6', '#ade8f4', '#90e0ef', '#48cae4', '#0096c7', '#023e8a']; // Colors matching the standard order from 1 to 10
 
             // Generate a label with a colored square for each interval
             for (var i = 0; i < grades.length; i++) {
-                div.innerHTML +=
-                    '<i style="background:' + colors[i] + '; width: 40px; height: 18px; display: block;"></i> ' +
-                    grades[i];
+                var item = L.DomUtil.create('div', '', div);
+                item.style.display = 'flex';
+                item.style.alignItems = 'center';
+                item.style.marginRight = '10px'; // Space between items
+
+                var colorBox = L.DomUtil.create('i', '', item);
+                colorBox.style.background = colors[i];
+                colorBox.style.width = '20px'; // Width for each colored box
+                colorBox.style.height = '18px'; // Height for each colored box
+                colorBox.style.display = 'inline-block';
+                colorBox.style.marginRight = '4px'; // Space between color box and text
+
+                var text = document.createTextNode(grades[i]);
+                item.appendChild(text);
             }
 
             return div;
         };
 
         legend.addTo(map);
+
 
     </script>
 </body>
