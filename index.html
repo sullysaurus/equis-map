@@ -9,6 +9,15 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.6/leaflet-search.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QNXPRSXDKK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-QNXPRSXDKK');
+    </script>
     <style>
         body,
         html {
@@ -304,7 +313,7 @@
                 }).then(function (data) {
                     L.geoJson(data, {
                         style: {
-                            color: "#000", 
+                            color: "#000",
                             weight: 1,
                             opacity: 1,
                             fillOpacity: 0
