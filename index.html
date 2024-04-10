@@ -111,15 +111,12 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            /* Position from the left edge of the page */
             transform: none;
-            /* Remove the transform property */
             z-index: 1000;
             background-color: rgba(255, 255, 255, 0.8);
             padding: 2px 10px;
             border-radius: 5px;
             color: #333;
-            /* Center the text */
         }
 
         /* Custom font sizes for each line of text */
@@ -174,26 +171,26 @@
             }
 
             .legend {
-                height: auto !important;
-                /* Allow the legend height to fit content */
-                flex-direction: row !important;
-                /* Align legend items horizontally to reduce height */
-                flex-wrap: wrap !important;
-                /* Allow items to wrap within the legend */
-                justify-content: space-around !important;
-                /* Evenly distribute items within the legend */
-                padding: 4px !important;
-                /* Reduce padding to decrease overall size */
-                width: auto !important;
-                /* Ensure legend width matches new layout */
-                margin: 0 auto !important;
-                /* Center legend and add margin for visual spacing */
+                width: 100%;
+                /* Make legend take full width to utilize space */
+                box-sizing: border-box;
+                /* Ensure padding does not add to the width */
+                overflow-x: auto;
+                /* Allow horizontal scrolling if content overflows */
+                padding: 10px;
+                /* Adjust padding for better visibility */
+                bottom: 0;
+                /* Position at the bottom */
+                left: 0;
+                /* Align with the left edge */
+                margin: 0;
+                /* Remove any margin */
             }
 
             .legend div,
             .legend i {
-                margin: 2px !important;
-                /* Reduce margin around color boxes and text to save space */
+                font-size: 10px;
+                /* Reduce font size for legend content */
             }
         }
     </style>
