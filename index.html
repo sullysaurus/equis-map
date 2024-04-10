@@ -140,7 +140,6 @@
             margin-top: 180px;
         }
 
-        /* Existing styles for .legend */
         .legend {
             display: flex;
             flex-direction: column;
@@ -151,46 +150,12 @@
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             width: 320px;
-            /* Adjust based on content */
         }
 
-        /* Media query for devices with a width of up to 600px */
         @media (max-width: 600px) {
-            .leaflet-bottom .leaflet-control {
-                bottom: 10px !important;
-                /* Add some space at the bottom */
-                left: 10px !important;
-                /* Add some space from the left side to prevent being cut off */
-                right: 10px !important;
-                /* Add some space from the right side for consistency */
-                top: auto !important;
-                width: calc(100% - 20px) !important;
-                /* Adjust width to account for left and right spacing */
-                border-radius: 0;
-                /* Optional: Remove border radius for a full-width footer appearance */
-            }
-
-            .legend {
-                width: 100%;
-                /* Make legend take full width to utilize space */
-                box-sizing: border-box;
-                /* Ensure padding does not add to the width */
-                overflow-x: auto;
-                /* Allow horizontal scrolling if content overflows */
-                padding: 10px;
-                /* Adjust padding for better visibility */
-                bottom: 0;
-                /* Position at the bottom */
-                left: 0;
-                /* Align with the left edge */
-                margin: 0;
-                /* Remove any margin */
-            }
-
-            .legend div,
-            .legend i {
-                font-size: 10px;
-                /* Reduce font size for legend content */
+            .map-title p {
+                font-size: 14px;
+                /* Adjust font size for smaller screens */
             }
         }
     </style>
